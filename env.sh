@@ -4,4 +4,4 @@ else
 	export GOPATH=$GOPATH:$(pwd)
 fi
 
-export GOPATH=$GOPATH:$(pwd)/third/ember/src
+export GOPATH=$GOPATH:$(pwd)/third/ember

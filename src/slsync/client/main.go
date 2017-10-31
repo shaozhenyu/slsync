@@ -4,10 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"slsync/server"
-
 	"ember/cli"
-	"ember/http/rpc"
 )
 
 const (
@@ -33,18 +30,11 @@ func CmdInit(args []string) {
 	cli.Check(err)
 	err = InitLocalConfig(pwd, SlSyncDir, user, dpath)
 	cli.Check(err)
+	//TODO init remote config
 }
 
 func CmdSync(args []string) {
 	fmt.Println("sync:", args)
-
-	client := &server.Client{}
-	rpc := rpc.NewClient("127.0.0.1:8080")
-	err := rpc.Reg(client)
-	if err != nil {
-		return
-	}
-	client.Test("ttt")
 
 	Sync(args)
 }
@@ -64,4 +54,11 @@ func Sync(args []string) {
 	if len(args) == 1 {
 		path = args[0]
 	}
+	fmt.Println(path, root)
+
+	node, err := NewNode(pwd, SlSyncDir)
+	cli.Check(err)
+	fmt.Println("node:", node)
+
+	node.Sync(path)
 }
