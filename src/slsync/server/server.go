@@ -4,9 +4,21 @@ import (
 	"fmt"
 	"sync"
 
+	"slsync/share"
+
 	"ember/cli"
 	"ember/http/rpc"
 )
+
+type Server struct {
+	service *share.Service
+	locker  sync.Mutex
+}
+
+type Client struct {
+	Gets func(path string) (leaves share.Leaves, err error) `args:"path" return:"leaves"`
+	Test func(path string) (value string, err error)        `args:"path" return:"value,err"`
+}
 
 func Reg(cmds *cli.Cmds) {
 	cmds.Reg("run", "run slsync server", CmdRun)
@@ -23,8 +35,10 @@ func CmdRun(args []string) {
 	cli.Check(err)
 }
 
-type Client struct {
-	Test func(path string) (value string, err error) `args:"path" return:"value,err"`
+func (p *Server) Gets(path string) (leaves share.Leaves, err error) {
+	leaves = p.service.GetAll(path)
+	fmt.Println("get leaves ok:", leaves)
+	return
 }
 
 func (p *Server) Test(path string) (string, error) {
@@ -33,10 +47,12 @@ func (p *Server) Test(path string) (string, error) {
 }
 
 func NewServer(path string) (p *Server, err error) {
-	p = &Server{}
+	service, err := share.NewService(path)
+	if err != nil {
+		return
+	}
+	p = &Server{
+		service: service,
+	}
 	return
-}
-
-type Server struct {
-	locker sync.Mutex
 }

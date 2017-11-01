@@ -27,6 +27,13 @@ func (p *Node) Sync(path string) (err error) {
 		return errors.New("node.paths:" + err.Error())
 	}
 	fmt.Println(dpath, abs)
+
+	leaves, err := p.client.Gets(dpath)
+	if err != nil {
+		return
+	}
+	fmt.Println("leaves: ", leaves)
+
 	return
 }
 

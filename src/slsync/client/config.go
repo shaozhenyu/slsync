@@ -100,6 +100,10 @@ func NewConfig(path string, slsync string) (p *Config, err error) {
 	if len(p.Remote.RootService) == 0 {
 		p.Remote.RootService = DefaultRootServiceAddress
 	}
+
+	if len(p.Remote.Address) == 0 {
+		p.Remote.Address = DefaultRootServiceAddress
+	}
 	return
 }
 
